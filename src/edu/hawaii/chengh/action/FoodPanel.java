@@ -2,7 +2,6 @@ package edu.hawaii.chengh.action;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import java.awt.GridLayout;
 
@@ -67,7 +66,12 @@ public class FoodPanel extends JPanel {
     this.foodCal = foodCal;
   }
 
-
+  
+  /**
+   * A string of the information together.
+   * 
+   * @return information.
+   */
   public String fieldInfo() {
     return getFoodName().getText().trim() + "  " + getFoodCal().getText().trim();
   }

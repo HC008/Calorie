@@ -23,14 +23,17 @@ import edu.hawaii.chengh.calorie.Avatar;
  */
 public class Processor {
   
+  /**
+   * Construct the class.
+   */
   public Processor() {
-    
+    //Serves in processing the action for the program.
   }
   /**
    * Transfer user's name to a file.
    * 
    * @param user - person utilizing the app.
-   * @throws IOException
+   * @throws IOException - exception.
    */
   public void writeToFile(Avatar user) throws IOException {
     File names = new File("../calorie-ver-2/src/Names.txt");
@@ -45,7 +48,7 @@ public class Processor {
    * Reads in the filenames currently on directory.
    * 
    * @return fileNames - list of file names.
-   * @throws IOException
+   * @throws IOException - exception.
    */
   public List<String> readInFile() throws IOException {
     
@@ -57,7 +60,8 @@ public class Processor {
     while ((title = nameFile.readLine()) != null) {
       fileNames.add(title);
     }
-
+    
+    nameFile.close();
     return fileNames;
   }
   
@@ -65,8 +69,8 @@ public class Processor {
    * Writes information about the object to file.
    * 
    * @param user - person using this app.
-   * @throws FileNotFoundException
-   * @throws IOException
+   * @throws FileNotFoundException - file is not on server.
+   * @throws IOException - exception.
    */
   public void serialData(Avatar user) throws FileNotFoundException, IOException {
     ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(user.getName() + ".ser"));
@@ -79,7 +83,9 @@ public class Processor {
   /**
    * Decode the object's information.
    * 
-   * @throws IOException
+   * @param name - the user's name.
+   * @throws IOException - exception.
+   * @return people - the information of the user.
    */
   public Avatar deserialData(String name) throws IOException {
     
@@ -98,9 +104,17 @@ public class Processor {
       e.printStackTrace();
     }
     
+    in.close();
     return null;
   }
   
+  /**
+   * Transfer information of what the user ate to a file.
+   * 
+   * @param name - user's name for the file.
+   * @param foods - the list of the foods the user ate.
+   * @throws IOException - exception.
+   */
   public void writeFood(String name, List<String> foods) throws IOException {
     File foodFile = new File(name + "_Food.txt");
     PrintWriter printer = new PrintWriter(new FileWriter(foodFile, false));
@@ -113,5 +127,7 @@ public class Processor {
         printer.println(foods.get(i));
       }
     }
+    
+    printer.close();
   }
 }

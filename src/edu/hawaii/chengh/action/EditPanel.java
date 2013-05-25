@@ -43,27 +43,51 @@ public class EditPanel extends JPanel {
     this.add(passField);
   }
   
-  
+  /**
+   * Retrieve user's actual name.
+   * 
+   * @return nameField - name of user.
+   */
   public JTextField getNameField() {
     return nameField;
   }
 
-
+  
+  /**
+   * Retrieve the user's age of the user.
+   * 
+   * @return ageField - user's age.
+   */
   public JTextField getAgeField() {
     return ageField;
   }
 
-
+  
+  /**
+   * Retrieve the amount of calorie limit.
+   * 
+   * @return calField - calorie amount.
+   */
   public JTextField getCalField() {
     return calField;
   }
 
-
+  
+  /**
+   * Retrieve the username of the user.
+   * 
+   * @return userField - username.
+   */
   public JTextField getUserField() {
     return userField;
   }
 
-
+  
+  /**
+   * Retrieve the security password of the user's account.
+   * 
+   * @return passField - password.
+   */
   public JPasswordField getPassField() {
     return passField;
   }
@@ -85,18 +109,13 @@ public class EditPanel extends JPanel {
    * 
    * @return a complete password.
    */
-  public String secureCode() {
-    char[] temp = passField.getPassword();
-    
-    String code = "";
-    
-    for (int i = 0; i < temp.length; i++) {
-      code += temp[i];
-    }
-    
-    return code;
+  public char[] secureCode() {
+    return passField.getPassword();
   }
   
+  /**
+   * Clear the textfields of any texts.
+   */
   public void clearField() {
     nameField.setText("");
     ageField.setText("");

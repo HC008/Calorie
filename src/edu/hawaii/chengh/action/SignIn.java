@@ -14,10 +14,15 @@ import javax.swing.JTextField;
  */
 public class SignIn extends JPanel {
   
+
+  private static final long serialVersionUID = 1L;
   private JLabel idLabel = new JLabel("Username: "), passLabel = new JLabel("Password: ");
   private JTextField userTitle = new JTextField(15);
   private JPasswordField pass = new JPasswordField(15);
   
+  /**
+   * Construct signin panel.
+   */
   public SignIn() {
     this.setLayout(new GridLayout(2, 0));
     this.add(idLabel);
@@ -29,17 +34,10 @@ public class SignIn extends JPanel {
   /**
    * Converts password into a whole string.
    * 
-   * @return a complete password.
+   * @return code - a complete password.
    */
-  public String secureCode() {
-    char[] temp = pass.getPassword();
-    String code = "";
-    
-    for (int i = 0; i < temp.length; i++) {
-      code += temp[i];
-    }
-    
-    return code;
+  public char[] secureCode() {
+    return pass.getPassword();
   }
   
 

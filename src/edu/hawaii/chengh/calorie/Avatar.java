@@ -24,7 +24,7 @@ public class Avatar implements java.io.Serializable {
    * @param age - how old the user.
    * @param calLimit - amount of energy a user can take in on a daily basis.
    * @param userId - code name of profile.
-   * @parama passId - security feature.
+   * @param passId - security feature.
    */
   public Avatar(String name, int age, int calLimit, String userId, String passId) {
     this.name = name;
@@ -36,7 +36,7 @@ public class Avatar implements java.io.Serializable {
   }
 
   /**
-   * Retrieve's name of the user
+   * Retrieve's name of the user.
    * 
    * @return name - the name the user goes by.
    */

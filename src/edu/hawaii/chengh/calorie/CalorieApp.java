@@ -60,6 +60,9 @@ public class CalorieApp extends JFrame {
   private List<String> userTitle = new ArrayList<String>();
   private String userName = "";
   
+  /**
+   * Construct the program.
+   */
   public CalorieApp() {
     mainPanel.setBackground(Color.decode("#AFFEBD"));
     mainPanel.setLayout(null);
@@ -125,7 +128,7 @@ public class CalorieApp extends JFrame {
                                                          JOptionPane.OK_CANCEL_OPTION);
         if (valueOne == JOptionPane.OK_OPTION) {
           String[] info = conjurePanel.fieldInfo().split("  ");
-          String password = conjurePanel.secureCode();
+          String password = new String(conjurePanel.secureCode());
           
           Avatar user = new Avatar(info[0], Integer.parseInt(info[1]), 
                                    Integer.parseInt(info[2]), info[3], password);
@@ -168,6 +171,10 @@ public class CalorieApp extends JFrame {
         
         int valueTwo = JOptionPane.showConfirmDialog(null, editInfo, "Edit profile",
                                                             JOptionPane.OK_CANCEL_OPTION);
+        
+        if (valueTwo == JOptionPane.OK_OPTION) {
+          System.out.println("2");
+        }
       }
     });
     
@@ -208,15 +215,7 @@ public class CalorieApp extends JFrame {
         JFrame pieFrame = new JFrame();
         
         for (int i = 0; i < users.size(); i++) {
-          if (!(users.get(i).getName().equalsIgnoreCase(userName))) {
-            PieChart chart = new PieChart();
-            
-            pieFrame.setSize(300, 300);
-            pieFrame.add(chart);
-            pieFrame.setVisible(true);
-            break;
-          }
-          else if (users.get(i).getName().equalsIgnoreCase(userName)){
+          if (users.get(i).getName().equalsIgnoreCase(userName)) {
             JLabel limit = new JLabel("Overall calorie limit: " + users.get(i).getCalLimit());
             PieChart data = new PieChart();
             JFrame pieData = new JFrame();
@@ -227,6 +226,15 @@ public class CalorieApp extends JFrame {
             pieData.setVisible(true);
             break;
           }
+          else {
+            PieChart chart = new PieChart();
+            
+            pieFrame.setSize(300, 300);
+            pieFrame.add(chart);
+            pieFrame.setVisible(true);
+            break;
+          }
+          
         }
       }
     });
@@ -236,12 +244,16 @@ public class CalorieApp extends JFrame {
         
         int valueFour = JOptionPane.showConfirmDialog(null, logIn, "Logging In",
                                                          JOptionPane.OK_CANCEL_OPTION);
+        
+        if (valueFour == JOptionPane.OK_OPTION) {
+          System.out.println("4");
+        }
       }
     });
     
     signOut.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        
+        //Signout
       }
     });
     this.add(mainPanel);
@@ -251,8 +263,12 @@ public class CalorieApp extends JFrame {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
+  /**
+   * Main structure to execute the program.
+   * 
+   * @param args - arguments from console.
+   */
   public static void main(String[] args) {
-    @SuppressWarnings("unused")
-    CalorieApp calTrack = new CalorieApp();
+    new CalorieApp();
   }
 }

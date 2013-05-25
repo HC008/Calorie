@@ -59,17 +59,13 @@ public class CreatePanel extends JPanel {
    * 
    * @return a complete password.
    */
-  public String secureCode() {
-    char[] temp = password.getPassword();
-    String code = "";
-    
-    for (int i = 0; i < temp.length; i++) {
-      code += temp[i];
-    }
-    
-    return code;
+  public char[] secureCode() {
+    return password.getPassword();
   }
   
+  /**
+   * Clears the textfields of previous input.
+   */
   public void clearField() {
     nameInfo.setText("");
     ageInfo.setText("");

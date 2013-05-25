@@ -8,4 +8,4 @@ that particular food.
 
 #Screenshot
 
-<div style="text-align: center"><img src="https://github.com/HC008/Calorie/Cal_Main_UI.jpg"></div>
+![Calorie Interface](https://github.com/HC008/Calorie/Cal_Main_UI.png)

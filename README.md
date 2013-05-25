@@ -7,4 +7,4 @@ to input information about a certain food he or she eat and the approximate calo
 that particular food.
 
 
-![Calorie Inteface](HC008.github.com/Calorie/Cal_Main_UI.jpg)
+![Calorie Inteface](https//github.com/HC008/Calorie/Cal_Main_UI.jpg)

@@ -51,14 +51,15 @@ public class CalorieApp extends JFrame {
                     edit = new JMenuItem("Edit Profile"),
                     food = new JMenuItem("Add Food"),
                     viewChart = new JMenuItem("Calorie Chart"),
-                    signOn = new JMenuItem("Sign-On"),
+                    signIn = new JMenuItem("Sign-In"),
                     signOut = new JMenuItem("Sign-Out");
   
   private List<Avatar> users = new ArrayList<Avatar>();
   private List<String> meals = new ArrayList<String>();
   private Processor process = new Processor();
   private List<String> userTitle = new ArrayList<String>();
-  private String userName = "";
+  private String userName = "", passcode = "";
+  private int userIndex = -1;
   
   /**
    * Construct the program.
@@ -77,15 +78,15 @@ public class CalorieApp extends JFrame {
     food.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.ALT_MASK));
     viewChart.setPreferredSize(new Dimension(250, 20));
     viewChart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.ALT_MASK));
-    signOn.setPreferredSize(new Dimension(250, 20));
-    signOn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
+    signIn.setPreferredSize(new Dimension(250, 20));
+    signIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
     signOut.setPreferredSize(new Dimension(250, 20));
     signOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.ALT_MASK));
     menuFile.add(create);
     menuFile.add(edit);
     menuFile.add(food);
     menuView.add(viewChart);
-    access.add(signOn);
+    access.add(signIn);
     access.add(signOut);
     menuBar.add(menuFile);
     menuBar.add(menuView);
@@ -134,8 +135,9 @@ public class CalorieApp extends JFrame {
                                    Integer.parseInt(info[2]), info[3], password);
           
           userName = info[0];
-          
+          passcode = password;
           users.add(user);
+          
           try {
             process.serialData(user);
             process.writeToFile(user);
@@ -150,6 +152,7 @@ public class CalorieApp extends JFrame {
           }
           
           conjurePanel.clearField();
+          area.append("Profile successfully created");
         }
       }
     });
@@ -158,12 +161,20 @@ public class CalorieApp extends JFrame {
     edit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < users.size(); i++) {
-          if (users.get(i).getName().equalsIgnoreCase(userName)) {
+          if (userName.equalsIgnoreCase(users.get(i).getUserId()) &&
+              passcode.equalsIgnoreCase(users.get(i).getPassId())) {
+            
             editInfo.getNameField().setText(users.get(i).getName());
             editInfo.getAgeField().setText(Integer.toString(users.get(i).getAge()));
             editInfo.getCalField().setText(Integer.toString(users.get(i).getCalLimit()));
             editInfo.getUserField().setText(users.get(i).getUserId());
             editInfo.getPassField().setText(users.get(i).getPassId());
+          
+            break;
+          }
+          else {
+            JOptionPane.showMessageDialog(null, "Sign-in first before editing info", 
+                                                  "Edit Error", JOptionPane.ERROR_MESSAGE);
             
             break;
           }
@@ -178,7 +189,7 @@ public class CalorieApp extends JFrame {
       }
     });
     
-    //Input the food and amount of calorie
+    //Input the food and approximate amount of calories of the food
     food.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int valueThree = JOptionPane.showConfirmDialog(null, foodPanel, 
@@ -191,10 +202,19 @@ public class CalorieApp extends JFrame {
           meals.add(foodEaten);
           
           for (int j = 0; j < users.size(); j++) {
-            if (users.get(j).getName().equalsIgnoreCase(userName)) {
+            if (userName.equalsIgnoreCase(users.get(j).getUserId()) &&
+                passcode.equals(users.get(j).getPassId())) {
               
               String[] splitted = foodPanel.fieldInfo().split("  ");
               users.get(j).setInTake(Integer.parseInt(splitted[1]));
+              
+              try {
+                process.writeFood(users.get(j).getName(), meals);
+              }
+              catch (IOException x) {
+                JOptionPane.showMessageDialog(null, "File not found", "No File", 
+                                                          JOptionPane.ERROR_MESSAGE);
+              }
               break;
               
             }
@@ -211,11 +231,14 @@ public class CalorieApp extends JFrame {
     
     //View the pie data
     viewChart.addActionListener(new ActionListener() {
+      @SuppressWarnings("unused")
       public void actionPerformed(ActionEvent e) {
         JFrame pieFrame = new JFrame();
         
         for (int i = 0; i < users.size(); i++) {
-          if (users.get(i).getName().equalsIgnoreCase(userName)) {
+          
+          System.out.println(userName);
+          if (userName.equalsIgnoreCase(users.get(i).getUserId())) {
             JLabel limit = new JLabel("Overall calorie limit: " + users.get(i).getCalLimit());
             PieChart data = new PieChart();
             JFrame pieData = new JFrame();
@@ -239,21 +262,40 @@ public class CalorieApp extends JFrame {
       }
     });
     //User logs in
-    signOn.addActionListener(new ActionListener() {
+    signIn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         
         int valueFour = JOptionPane.showConfirmDialog(null, logIn, "Logging In",
                                                          JOptionPane.OK_CANCEL_OPTION);
         
         if (valueFour == JOptionPane.OK_OPTION) {
-          System.out.println("4");
+          String idName = logIn.fieldInfo();
+          String pass = new String(logIn.secureCode());
+          
+          for (int j = 0; j < users.size(); j++) {
+            if (idName.equalsIgnoreCase(users.get(j).getUserId()) &&
+                pass.equals(users.get(j).getPassId())) {
+              
+              area.setText("");
+              area.append("Welcome. Sign-in successful.");
+              
+              userName = idName;
+              passcode = pass;
+              userIndex = j;
+            }
+            else {
+              JOptionPane.showMessageDialog(null, "Sign-in unsuccessful", "Sign-in Error", 
+                                                                    JOptionPane.ERROR_MESSAGE);
+            }
+          }
         }
       }
     });
-    
+    //User logs out of the current session
     signOut.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        //Signout
+        userName = "";
+        passcode = "";
       }
     });
     this.add(mainPanel);

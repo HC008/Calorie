@@ -58,7 +58,8 @@ public class CalorieApp extends JFrame {
   private List<String> meals = new ArrayList<String>();
   private Processor process = new Processor();
   private List<String> userTitle = new ArrayList<String>();
-  private String userName = "", passcode = "";
+  private String userName = "", userId = "", passcode = "";
+  private Avatar temp;
   private int userIndex = -1;
   
   /**
@@ -133,10 +134,11 @@ public class CalorieApp extends JFrame {
           
           Avatar user = new Avatar(info[0], Integer.parseInt(info[1]), 
                                    Integer.parseInt(info[2]), info[3], password);
-          
           userName = info[0];
+          userId = info[3];
           passcode = password;
           users.add(user);
+          userIndex = users.indexOf(userName);
           
           try {
             process.serialData(user);
@@ -161,7 +163,7 @@ public class CalorieApp extends JFrame {
     edit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < users.size(); i++) {
-          if (userName.equalsIgnoreCase(users.get(i).getUserId()) &&
+          if (userId.equalsIgnoreCase(users.get(i).getUserId()) &&
               passcode.equalsIgnoreCase(users.get(i).getPassId())) {
             
             editInfo.getNameField().setText(users.get(i).getName());
@@ -201,25 +203,23 @@ public class CalorieApp extends JFrame {
           System.out.println(foodEaten);
           meals.add(foodEaten);
           
-          for (int j = 0; j < users.size(); j++) {
-            if (userName.equalsIgnoreCase(users.get(j).getUserId()) &&
-                passcode.equals(users.get(j).getPassId())) {
-              
-              String[] splitted = foodPanel.fieldInfo().split("  ");
-              users.get(j).setInTake(Integer.parseInt(splitted[1]));
-              
-              try {
-                process.writeFood(users.get(j).getName(), meals);
-              }
-              catch (IOException x) {
-                JOptionPane.showMessageDialog(null, "File not found", "No File", 
-                                                          JOptionPane.ERROR_MESSAGE);
-              }
-              break;
-              
+          if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
+              passcode.equals(users.get(userIndex).getPassId())) {
+            
+            String[] splitted = foodPanel.fieldInfo().split("  ");
+            users.get(userIndex).setInTake(Integer.parseInt(splitted[1]));
+            
+            try {
+              process.writeFood(users.get(userIndex).getName(), meals);
+            }
+            catch (IOException x) {
+              JOptionPane.showMessageDialog(null, "File not found", "No File", 
+                                                        JOptionPane.ERROR_MESSAGE);
             }
           }
-     
+          
+          temp = users.get(userIndex);
+          
           area.setText(" ");
           for (int i = 0; i < meals.size(); i++) {
             String[] splits = meals.get(i).split("  ");
@@ -235,29 +235,24 @@ public class CalorieApp extends JFrame {
       public void actionPerformed(ActionEvent e) {
         JFrame pieFrame = new JFrame();
         
-        for (int i = 0; i < users.size(); i++) {
+        if (userId.equalsIgnoreCase(users.get(userIndex).getUserId())) {
+          JLabel limit = new JLabel("Overall calorie limit: " + 
+                                          users.get(userIndex).getCalLimit());
+          PieChart data = new PieChart();
+          JFrame pieData = new JFrame();
+          data.add(limit);
+          pieData.setSize(300, 300);
+          data.loadData(users.get(userIndex));
+          pieData.add(data);
+          pieData.setVisible(true);
+       
+        }
+        else {
+          PieChart chart = new PieChart();
           
-          System.out.println(userName);
-          if (userName.equalsIgnoreCase(users.get(i).getUserId())) {
-            JLabel limit = new JLabel("Overall calorie limit: " + users.get(i).getCalLimit());
-            PieChart data = new PieChart();
-            JFrame pieData = new JFrame();
-            data.add(limit);
-            pieData.setSize(300, 300);
-            data.loadData(users.get(i));
-            pieData.add(data);
-            pieData.setVisible(true);
-            break;
-          }
-          else {
-            PieChart chart = new PieChart();
-            
-            pieFrame.setSize(300, 300);
-            pieFrame.add(chart);
-            pieFrame.setVisible(true);
-            break;
-          }
-          
+          pieFrame.setSize(300, 300);
+          pieFrame.add(chart);
+          pieFrame.setVisible(true);
         }
       }
     });
@@ -274,12 +269,13 @@ public class CalorieApp extends JFrame {
           
           for (int j = 0; j < users.size(); j++) {
             if (idName.equalsIgnoreCase(users.get(j).getUserId()) &&
-                pass.equals(users.get(j).getPassId())) {
+                                    pass.equals(users.get(j).getPassId())) {
               
               area.setText("");
               area.append("Welcome. Sign-in successful.");
               
-              userName = idName;
+              userName = users.get(j).getName();
+              userId = idName;
               passcode = pass;
               userIndex = j;
             }
@@ -294,10 +290,23 @@ public class CalorieApp extends JFrame {
     //User logs out of the current session
     signOut.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        userName = "";
+        
+        try {
+          process.serialData(temp);
+        }
+        catch (FileNotFoundException e1) {
+          JOptionPane.showMessageDialog(null, "No such file", 
+                                        "Missing File", JOptionPane.ERROR_MESSAGE);
+        }
+        catch (IOException e1) {
+          JOptionPane.showMessageDialog(null, "Error with either input or output", 
+                                         "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+        }
+        userId = "";
         passcode = "";
       }
     });
+    
     this.add(mainPanel);
     this.setTitle("Calorie App");
     this.setSize(new Dimension(900, 600));

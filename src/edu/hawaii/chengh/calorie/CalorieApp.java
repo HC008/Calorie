@@ -162,26 +162,19 @@ public class CalorieApp extends JFrame {
     //Edit one's profile information
     edit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        for (int i = 0; i < users.size(); i++) {
-          if (userId.equalsIgnoreCase(users.get(i).getUserId()) &&
-              passcode.equalsIgnoreCase(users.get(i).getPassId())) {
-            
-            editInfo.getNameField().setText(users.get(i).getName());
-            editInfo.getAgeField().setText(Integer.toString(users.get(i).getAge()));
-            editInfo.getCalField().setText(Integer.toString(users.get(i).getCalLimit()));
-            editInfo.getUserField().setText(users.get(i).getUserId());
-            editInfo.getPassField().setText(users.get(i).getPassId());
+        if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
+            passcode.equalsIgnoreCase(users.get(userIndex).getPassId())) {
           
-            break;
-          }
-          else {
-            JOptionPane.showMessageDialog(null, "Sign-in first before editing info", 
-                                                  "Edit Error", JOptionPane.ERROR_MESSAGE);
-            
-            break;
-          }
+          editInfo.getNameField().setText(users.get(userIndex).getName());
+          editInfo.getAgeField().setText(Integer.toString(users.get(userIndex).getAge()));
+          editInfo.getCalField().setText(Integer.toString(users.get(userIndex).getCalLimit()));
+          editInfo.getUserField().setText(users.get(userIndex).getUserId());
+          editInfo.getPassField().setText(users.get(userIndex).getPassId());
         }
-        
+        else {
+          JOptionPane.showMessageDialog(null, "Sign-in first before editing info", 
+                                                "Edit Error", JOptionPane.ERROR_MESSAGE);
+        }
         int valueTwo = JOptionPane.showConfirmDialog(null, editInfo, "Edit profile",
                                                             JOptionPane.OK_CANCEL_OPTION);
         
@@ -207,6 +200,7 @@ public class CalorieApp extends JFrame {
               passcode.equals(users.get(userIndex).getPassId())) {
             
             String[] splitted = foodPanel.fieldInfo().split("  ");
+            //Add amount of calories the user consumed
             users.get(userIndex).setInTake(Integer.parseInt(splitted[1]));
             
             try {
@@ -225,8 +219,8 @@ public class CalorieApp extends JFrame {
             String[] splits = meals.get(i).split("  ");
             area.append("Food: " + splits[0] + "\n" + "Calorie: " + splits[1] + "\n\n");
           } //end of for loop
-        } //end of outter if statement
-      }
+        } //end of outer if statement
+      } //end of actionPerformed method
     });
     
     //View the pie data
@@ -274,6 +268,7 @@ public class CalorieApp extends JFrame {
               area.setText("");
               area.append("Welcome. Sign-in successful.");
               
+              //Stores the necessary information to be used after user signed-in
               userName = users.get(j).getName();
               userId = idName;
               passcode = pass;
@@ -282,10 +277,10 @@ public class CalorieApp extends JFrame {
             else {
               JOptionPane.showMessageDialog(null, "Sign-in unsuccessful", "Sign-in Error", 
                                                                     JOptionPane.ERROR_MESSAGE);
-            }
-          }
-        }
-      }
+            } //end of inner if-else statement
+          } //end of for-loop
+        } //end of outer if statement
+      } //end of actionPerformed method
     });
     //User logs out of the current session
     signOut.addActionListener(new ActionListener() {
@@ -302,6 +297,11 @@ public class CalorieApp extends JFrame {
           JOptionPane.showMessageDialog(null, "Error with either input or output", 
                                          "Input, Output Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        area.setText("");
+        area.append("Signed-out");
+        
+        //Reset after user signs out
         userId = "";
         passcode = "";
       }

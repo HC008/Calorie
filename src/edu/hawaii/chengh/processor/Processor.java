@@ -53,8 +53,7 @@ public class Processor {
   public List<String> readInFile() throws IOException {
     
     List<String> fileNames = new ArrayList<String>();
-    BufferedReader nameFile = new BufferedReader(new FileReader("C:/Users/HC0113/Documents/" + 
-                                                                    "calorie-ver-2/src/Names.txt"));
+    BufferedReader nameFile = new BufferedReader(new FileReader("Names.txt"));
     String title = "";
     
     while ((title = nameFile.readLine()) != null) {

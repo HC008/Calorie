@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import edu.hawaii.chengh.calorie.Avatar;
 
 /**
@@ -36,12 +37,19 @@ public class Processor {
    * @throws IOException - exception.
    */
   public void writeToFile(Avatar user) throws IOException {
-    File names = new File("../calorie-ver-2/src/Names.txt");
+    File names = new File("Names.txt");
+    
+    //Check if file is in directory before writing 
+    if (!names.exists() && names.createNewFile()) {
+        JOptionPane.showMessageDialog(null, "File successfully created", 
+                                      "Create File", JOptionPane.PLAIN_MESSAGE);
+    }
+    
     PrintWriter writer = new PrintWriter(new FileWriter(names, true));
-  
     writer.println(user.getName().trim());
     writer.flush();
     writer.close();
+    
   }
   
   /**

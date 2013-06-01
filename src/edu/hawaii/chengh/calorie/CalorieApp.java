@@ -69,7 +69,7 @@ public class CalorieApp extends JFrame {
     mainPanel.setBackground(Color.decode("#AFFEBD"));
     mainPanel.setLayout(null);
     
-    //Menu
+    //Building the menu and the keys associated with the action
     menuFile.setMnemonic('f');
     create.setPreferredSize(new Dimension(250, 20));
     create.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
@@ -111,13 +111,12 @@ public class CalorieApp extends JFrame {
           Avatar people = process.deserialData(userTitle.get(i));
             
           users.add(people);
-        }
-      }
-      
+        } //end of for loop
+      } //end of if statement
     }
     catch (IOException e2) {
-      // TODO Auto-generated catch block
-      e2.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Error with either input or output", 
+                                      "Input, Output Error", JOptionPane.ERROR_MESSAGE);
     }
     
     /*Listens to actions of each menu item*/

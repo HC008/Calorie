@@ -60,7 +60,7 @@ public class CalorieApp extends JFrame {
   private List<String> userTitle = new ArrayList<String>();
   private String userName = "", userId = "", passcode = "";
   private Avatar temp;
-  private int userIndex = -1;
+  private int userIndex = 0;
   
   /**
    * Construct the program.
@@ -170,38 +170,38 @@ public class CalorieApp extends JFrame {
           editInfo.getCalField().setText(Integer.toString(users.get(userIndex).getCalLimit()));
           editInfo.getUserField().setText(users.get(userIndex).getUserId());
           editInfo.getPassField().setText(users.get(userIndex).getPassId());
-        }
+          
+          int valueTwo = JOptionPane.showConfirmDialog(null, editInfo, "Edit profile",
+                                                            JOptionPane.OK_CANCEL_OPTION);
+          
+          if (valueTwo == JOptionPane.OK_OPTION) {
+            String[] splitted = editInfo.fieldInfo().split("  ");
+            String pass = new String(editInfo.secureCode());
+            
+            users.get(userIndex).setName(splitted[0]);
+            users.get(userIndex).setAge(Integer.parseInt(splitted[1]));
+            users.get(userIndex).setCalLimit(Integer.parseInt(splitted[2]));
+            users.get(userIndex).setUserId(splitted[3]);
+            users.get(userIndex).setPassId(pass);
+            
+            try {
+              process.serialData(users.get(userIndex));
+            }
+            catch (FileNotFoundException e1) {
+              JOptionPane.showMessageDialog(null, "File not found", 
+                                                  "No File", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IOException e1) {
+              JOptionPane.showMessageDialog(null, "Error with either input or output", 
+                                                    "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+            } //end of try-catch statement
+          } //end of inner if statement
+        } //outer if statement
         else {
           JOptionPane.showMessageDialog(null, "Sign-in first before editing info", 
                                                 "Edit Error", JOptionPane.ERROR_MESSAGE);
         }
-        
-        int valueTwo = JOptionPane.showConfirmDialog(null, editInfo, "Edit profile",
-                                                            JOptionPane.OK_CANCEL_OPTION);
-        
-        if (valueTwo == JOptionPane.OK_OPTION) {
-          String[] splitted = editInfo.fieldInfo().split("  ");
-          String pass = new String(editInfo.secureCode());
-          
-          users.get(userIndex).setName(splitted[0]);
-          users.get(userIndex).setAge(Integer.parseInt(splitted[1]));
-          users.get(userIndex).setCalLimit(Integer.parseInt(splitted[2]));
-          users.get(userIndex).setUserId(splitted[3]);
-          users.get(userIndex).setPassId(pass);
-          
-          try {
-            process.serialData(users.get(userIndex));
-          }
-          catch (FileNotFoundException e1) {
-            JOptionPane.showMessageDialog(null, "File not found", 
-                                                "No File", JOptionPane.ERROR_MESSAGE);
-          }
-          catch (IOException e1) {
-            JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                                  "Input, Output Error", JOptionPane.ERROR_MESSAGE);
-          } //end of try-catch statement
-        } //end of inner if statement
-      } //end of actionPerformed method
+      } 
     });
     
     //Input the food and approximate amount of calories of the food

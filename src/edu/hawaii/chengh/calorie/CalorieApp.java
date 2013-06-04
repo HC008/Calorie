@@ -230,7 +230,7 @@ public class CalorieApp extends JFrame {
                                                         JOptionPane.ERROR_MESSAGE);
             }
           }
-          
+        
           temp = users.get(userIndex);
           
           area.setText(" ");
@@ -247,21 +247,23 @@ public class CalorieApp extends JFrame {
       public void actionPerformed(ActionEvent e) {
         JFrame pieFrame = new JFrame();
         
-        if (userId.equalsIgnoreCase(users.get(userIndex).getUserId())) {
+        if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
+            passcode.equalsIgnoreCase(users.get(userIndex).getPassId())) {
+          
           JLabel limit = new JLabel("Overall calorie limit: " + 
                                           users.get(userIndex).getCalLimit());
           PieChart data = new PieChart();
           JFrame pieData = new JFrame();
+          
           data.add(limit);
           pieData.setSize(300, 300);
           data.loadData(users.get(userIndex));
           pieData.add(data);
           pieData.setVisible(true);
-       
         }
         else {
           PieChart chart = new PieChart();
-          
+    
           pieFrame.setSize(300, 300);
           pieFrame.add(chart);
           pieFrame.setVisible(true);

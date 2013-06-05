@@ -51,6 +51,7 @@ public class CalorieApp extends JFrame {
                     edit = new JMenuItem("Edit Profile"),
                     food = new JMenuItem("Add Food"),
                     viewChart = new JMenuItem("Calorie Chart"),
+                    viewFood = new JMenuItem("Food List"),
                     signIn = new JMenuItem("Sign-In"),
                     signOut = new JMenuItem("Sign-Out");
   
@@ -73,20 +74,30 @@ public class CalorieApp extends JFrame {
     menuFile.setMnemonic('f');
     create.setPreferredSize(new Dimension(250, 20));
     create.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
+    
     edit.setPreferredSize(new Dimension(250, 20));
     edit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
+    
     food.setPreferredSize(new Dimension(250, 20));
     food.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.ALT_MASK));
+    
     viewChart.setPreferredSize(new Dimension(250, 20));
     viewChart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.ALT_MASK));
+    
+    viewFood.setPreferredSize(new Dimension(250, 20));
+    viewFood.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.ALT_MASK));
+    
     signIn.setPreferredSize(new Dimension(250, 20));
     signIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
+    
     signOut.setPreferredSize(new Dimension(250, 20));
     signOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.ALT_MASK));
+    
     menuFile.add(create);
     menuFile.add(edit);
     menuFile.add(food);
     menuView.add(viewChart);
+    menuView.add(viewFood);
     access.add(signIn);
     access.add(signOut);
     menuBar.add(menuFile);
@@ -230,14 +241,9 @@ public class CalorieApp extends JFrame {
                                                         JOptionPane.ERROR_MESSAGE);
             }
           }
-        
+    
           temp = users.get(userIndex);
-          
-          area.setText(" ");
-          for (int i = 0; i < meals.size(); i++) {
-            String[] splits = meals.get(i).split("  ");
-            area.append("Food: " + splits[0] + "\n" + "Calorie: " + splits[1] + "\n\n");
-          } //end of for loop
+      
         } //end of outer if statement
       } //end of actionPerformed method
     });
@@ -270,6 +276,19 @@ public class CalorieApp extends JFrame {
         }
       }
     });
+    
+    //View the list of food and its calories
+    viewFood.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        area.setText("");
+        
+        for (int i = 0; i < meals.size(); i++) {
+          String[] splitted = meals.get(i).split("  ");
+          area.append("Food: " + splitted[0] + "\n" + "Calorie: " + splitted[1]);
+        }
+      }
+    });
+    
     //User logs in
     signIn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -302,6 +321,7 @@ public class CalorieApp extends JFrame {
         } //end of outer if statement
       } //end of actionPerformed method
     });
+    
     //User logs out of the current session
     signOut.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

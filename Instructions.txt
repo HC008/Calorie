@@ -1,0 +1,7 @@
+Instructions:
+
+1. Go to File > Create Avatar, or simply Alt + N. Then enter the information.
+
+2. Go to File > Add Food, or simply Alt + X. Enter name of food (e.g. simply be Teddy's Burger) and the approximate amount of calories.
+
+3. Go to View > View Chart or Alt + B and a frame will pop up with a pie data chart displaing your limit and the amount you intake.

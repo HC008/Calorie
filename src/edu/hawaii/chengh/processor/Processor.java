@@ -53,23 +53,23 @@ public class Processor {
   }
   
   /**
-   * Reads in the filenames currently on directory.
+   * Reads in information from a text file.
    * 
-   * @return fileNames - list of file names.
+   * @return info - list of information
    * @throws IOException - exception.
    */
-  public List<String> readInFile() throws IOException {
+  public List<String> readInFile(String fileTitle) throws IOException {
     
-    List<String> fileNames = new ArrayList<String>();
-    BufferedReader nameFile = new BufferedReader(new FileReader("Names.txt"));
+    List<String> info = new ArrayList<String>();
+    BufferedReader infoFile = new BufferedReader(new FileReader(fileTitle));
     String title = "";
     
-    while ((title = nameFile.readLine()) != null) {
-      fileNames.add(title);
+    while ((title = infoFile.readLine()) != null) {
+      info.add(title);
     }
     
-    nameFile.close();
-    return fileNames;
+    infoFile.close();
+    return info;
   }
   
   /**

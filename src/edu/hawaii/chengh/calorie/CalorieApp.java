@@ -115,8 +115,8 @@ public class CalorieApp extends JFrame {
      * read in information of all user profiles.
      */
     try {
-      if (!process.readInFile().isEmpty()) {
-        userTitle = process.readInFile();
+      if (!process.readInFile("Names.txt").isEmpty()) {
+        userTitle = process.readInFile("Names.txt");
         
         for (int i = 0; i < userTitle.size(); i++) {
           Avatar people = process.deserialData(userTitle.get(i));
@@ -202,9 +202,9 @@ public class CalorieApp extends JFrame {
               JOptionPane.showMessageDialog(null, "File not found", 
                                                   "No File", JOptionPane.ERROR_MESSAGE);
             }
-            catch (IOException e1) {
+            catch (IOException x) {
               JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                                    "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+                                            "Input, Output Error", JOptionPane.ERROR_MESSAGE);
             } //end of try-catch statement
           } //end of inner if statement
         } //outer if statement
@@ -237,8 +237,8 @@ public class CalorieApp extends JFrame {
               process.writeFood(users.get(userIndex).getName(), meals);
             }
             catch (IOException x) {
-              JOptionPane.showMessageDialog(null, "File not found", "No File", 
-                                                        JOptionPane.ERROR_MESSAGE);
+              JOptionPane.showMessageDialog(null, "Error with either input or output", 
+                                            "Input, Output Error", JOptionPane.ERROR_MESSAGE);
             }
           }
     
@@ -306,12 +306,21 @@ public class CalorieApp extends JFrame {
               
               area.setText("");
               area.append("Welcome. Sign-in successful.");
-              
+           
               //Stores the necessary information to be used after user signed-in
               userName = users.get(j).getName();
               userId = idName;
               passcode = pass;
               userIndex = j;
+              
+              //Store information of previous foods eaten
+              try {
+                meals = process.readInFile(userName + "_Food.txt");
+              }
+              catch (IOException x) {
+                JOptionPane.showMessageDialog(null, "Error with either input or output", 
+                                              "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+              }
             }
             else {
               JOptionPane.showMessageDialog(null, "Sign-in unsuccessful", "Sign-in Error", 
@@ -344,6 +353,7 @@ public class CalorieApp extends JFrame {
         //Reset after user signs out
         userId = "";
         passcode = "";
+        meals.clear();
       }
     });
     

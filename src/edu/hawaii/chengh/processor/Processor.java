@@ -64,10 +64,10 @@ public class Processor {
     
     List<String> info = new ArrayList<String>();
     BufferedReader infoFile = new BufferedReader(new FileReader(fileTitle));
-    String title = "";
+    String data = "";
     
-    while ((title = infoFile.readLine()) != null) {
-      info.add(title);
+    while ((data = infoFile.readLine()) != null) {
+      info.add(data);
     }
     
     infoFile.close();
@@ -128,7 +128,7 @@ public class Processor {
     File foodFile = new File(name + "_Food.txt");
     PrintWriter printer = new PrintWriter(new FileWriter(foodFile, true));
     
-    printer.print(food);
+    printer.println("\n" + food);
     printer.close();
   }
 }

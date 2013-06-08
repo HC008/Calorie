@@ -231,6 +231,7 @@ public class CalorieApp extends JFrame {
             
             try {
               process.writeFood(users.get(userIndex).getName(), meals.get(meals.size() - 1));
+              process.serialData(users.get(userIndex));
             }
             catch (IOException x) {
               inputError();
@@ -279,7 +280,7 @@ public class CalorieApp extends JFrame {
         
         for (int i = 0; i < meals.size(); i++) {
           String[] splitted = meals.get(i).split("  ");
-          area.append("Food: " + splitted[0] + "\n" + "Calorie: " + splitted[1]);
+          area.append("Food: " + splitted[0] + "\n" + "Calorie: " + splitted[1] + "\n\n");
         }
       }
     });
@@ -328,17 +329,6 @@ public class CalorieApp extends JFrame {
     //User logs out of the current session
     signOut.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        
-        try {
-          process.serialData(temp);
-        }
-        catch (FileNotFoundException e1) {
-          missingFile();
-        }
-        catch (IOException e1) {
-          inputError();
-        }
-        
         area.setText("");
         area.append("Signed-out");
         

@@ -126,8 +126,8 @@ public class CalorieApp extends JFrame {
       } //end of if statement
     }
     catch (IOException e2) {
-      JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                      "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(null, "Object construction failure", 
+                                      "Failure", JOptionPane.ERROR_MESSAGE);
     }
     
     /*Listens to actions of each menu item*/
@@ -152,15 +152,13 @@ public class CalorieApp extends JFrame {
           
           try {
             process.serialData(user);
-            process.writeToFile(user);
+            process.writeNames(user);
           }
           catch (FileNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            missingFile();
           }
           catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            inputError();
           }
           
           conjurePanel.clearField();
@@ -199,12 +197,10 @@ public class CalorieApp extends JFrame {
               process.serialData(users.get(userIndex));
             }
             catch (FileNotFoundException e1) {
-              JOptionPane.showMessageDialog(null, "File not found", 
-                                                  "No File", JOptionPane.ERROR_MESSAGE);
+              missingFile();
             }
             catch (IOException x) {
-              JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                            "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+              inputError();
             } //end of try-catch statement
           } //end of inner if statement
         } //outer if statement
@@ -234,11 +230,10 @@ public class CalorieApp extends JFrame {
             users.get(userIndex).setInTake(Integer.parseInt(splitted[1]));
             
             try {
-              process.writeFood(users.get(userIndex).getName(), meals);
+              process.writeFood(users.get(userIndex).getName(), meals.get(meals.size() - 1));
             }
             catch (IOException x) {
-              JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                            "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+              inputError();
             }
           }
     
@@ -318,8 +313,7 @@ public class CalorieApp extends JFrame {
                 meals = process.readInFile(userName + "_Food.txt");
               }
               catch (IOException x) {
-                JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                              "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+                inputError();
               }
             }
             else {
@@ -339,12 +333,10 @@ public class CalorieApp extends JFrame {
           process.serialData(temp);
         }
         catch (FileNotFoundException e1) {
-          JOptionPane.showMessageDialog(null, "File not found", 
-                                        "No File", JOptionPane.ERROR_MESSAGE);
+          missingFile();
         }
         catch (IOException e1) {
-          JOptionPane.showMessageDialog(null, "Error with either input or output", 
-                                         "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+          inputError();
         }
         
         area.setText("");
@@ -362,6 +354,22 @@ public class CalorieApp extends JFrame {
     this.setSize(new Dimension(900, 600));
     this.setVisible(true);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+  
+  /**
+   * Brings up error message for missing file.
+   */
+  public void missingFile() {
+    JOptionPane.showMessageDialog(null, "File not found", 
+        "No File", JOptionPane.ERROR_MESSAGE);
+  }
+  
+  /**
+   * Brings up error message for input or output error.
+   */
+  public void inputError() {
+    JOptionPane.showMessageDialog(null, "Error with input or output", 
+                                  "Input, Output Error", JOptionPane.ERROR_MESSAGE);
   }
   
   /**

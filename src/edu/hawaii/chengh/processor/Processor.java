@@ -30,13 +30,14 @@ public class Processor {
   public Processor() {
     //Serves in processing the action for the program.
   }
+  
   /**
    * Transfer user's name to a file.
    * 
    * @param user - person utilizing the app.
    * @throws IOException - exception.
    */
-  public void writeToFile(Avatar user) throws IOException {
+  public void writeNames(Avatar user) throws IOException {
     File names = new File("Names.txt");
     
     //Check if file is in directory before writing 
@@ -55,7 +56,8 @@ public class Processor {
   /**
    * Reads in information from a text file.
    * 
-   * @return info - list of information
+   * @param fileTitle - name of file to be read in.
+   * @return info - list of information.
    * @throws IOException - exception.
    */
   public List<String> readInFile(String fileTitle) throws IOException {
@@ -119,22 +121,14 @@ public class Processor {
    * Transfer information of what the user ate to a file.
    * 
    * @param name - user's name for the file.
-   * @param foods - the list of the foods the user ate.
+   * @param food - name of food and the amount of calories
    * @throws IOException - exception.
    */
-  public void writeFood(String name, List<String> foods) throws IOException {
+  public void writeFood(String name, String food) throws IOException {
     File foodFile = new File(name + "_Food.txt");
-    PrintWriter printer = new PrintWriter(new FileWriter(foodFile, false));
+    PrintWriter printer = new PrintWriter(new FileWriter(foodFile, true));
     
-    for (int i = 0; i < foods.size(); i++) {
-      if (i == foods.size() - 1) {
-        printer.print(foods.get(i));
-      }
-      else {
-        printer.println(foods.get(i));
-      }
-    }
-    
+    printer.print(food);
     printer.close();
   }
 }

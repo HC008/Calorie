@@ -6,10 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -60,8 +64,11 @@ public class CalorieApp extends JFrame {
   private Processor process = new Processor();
   private List<String> userTitle = new ArrayList<String>();
   private String userName = "", userId = "", passcode = "";
+  @SuppressWarnings("unused")
   private Avatar temp;
   private int userIndex = 0;
+  //Signal to show a chart if user doesn't have data
+  private int signal = 0;
   
   /**
    * Construct the program.
@@ -110,6 +117,9 @@ public class CalorieApp extends JFrame {
     mainPanel.add(menuBar);
     area.setEditable(false);
     mainPanel.add(area);
+    
+    checkDate();
+    
     
     /* If user used app before, then read in file of names to
      * read in information of all user profiles.
@@ -226,11 +236,12 @@ public class CalorieApp extends JFrame {
               passcode.equals(users.get(userIndex).getPassId())) {
             
             String[] splitted = foodPanel.fieldInfo().split("  ");
-            //Add amount of calories the user consumed
+            //Add amount of calories the user consumed and the
             users.get(userIndex).setInTake(Integer.parseInt(splitted[1]));
-            
+            //Allows user to view their calories
+            signal = 1;
             try {
-              process.writeFood(users.get(userIndex).getName(), meals.get(meals.size() - 1));
+              process.writeFood(users.get(userIndex).getName(), meals);
               process.serialData(users.get(userIndex));
             }
             catch (IOException x) {
@@ -250,7 +261,8 @@ public class CalorieApp extends JFrame {
         JFrame pieFrame = new JFrame();
         
         if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
-            passcode.equalsIgnoreCase(users.get(userIndex).getPassId())) {
+            passcode.equalsIgnoreCase(users.get(userIndex).getPassId()) &&
+                                                             signal != 0) {
           
           JLabel limit = new JLabel("Overall calorie limit: " + 
                                           users.get(userIndex).getCalLimit());
@@ -298,28 +310,37 @@ public class CalorieApp extends JFrame {
           
           for (int j = 0; j < users.size(); j++) {
             if (idName.equalsIgnoreCase(users.get(j).getUserId()) &&
-                                    pass.equals(users.get(j).getPassId())) {
+                  pass.equalsIgnoreCase(users.get(j).getPassId())) {
               
               area.setText("");
-              area.append("Welcome. Sign-in successful.");
-           
+              area.append("Welcome. Sign-in successful.\n");
+              
+              
               //Stores the necessary information to be used after user signed-in
               userName = users.get(j).getName();
               userId = idName;
               passcode = pass;
               userIndex = j;
+              signal = 1;
               
               //Store information of previous foods eaten
               try {
-                meals = process.readInFile(userName + "_Food.txt");
+                File tempFood = new File(userName + "_Food.txt");
+                
+                if (tempFood.exists()) {
+                  meals = process.readInFile(userName + "_Food.txt");
+                }
               }
               catch (IOException x) {
                 inputError();
               }
+              
+              break;
             }
             else {
               JOptionPane.showMessageDialog(null, "Sign-in unsuccessful", "Sign-in Error", 
                                                                     JOptionPane.ERROR_MESSAGE);
+              break;
             } //end of inner if-else statement
           } //end of for-loop
         } //end of outer if statement
@@ -336,6 +357,7 @@ public class CalorieApp extends JFrame {
         userId = "";
         passcode = "";
         meals.clear();
+        signal = 0;
       }
     });
     
@@ -360,6 +382,45 @@ public class CalorieApp extends JFrame {
   public void inputError() {
     JOptionPane.showMessageDialog(null, "Error with input or output", 
                                   "Input, Output Error", JOptionPane.ERROR_MESSAGE);
+  }
+  
+  /**
+   * Checks the date to ensure user's daily intake of calories
+   * will be set back to zero.
+   */
+  public void checkDate() {
+    Calendar date = Calendar.getInstance(Locale.US);
+    SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm a", Locale.US);
+    
+    int day = date.get(Calendar.DAY_OF_WEEK);
+    
+    switch (day) {
+    
+      case 1:
+        System.out.println("Sunday");
+        break;
+      case 2:
+        System.out.println("Monday");
+        break;
+      case 3:
+        System.out.println("Tuesday");
+        break;
+      case 4:
+        System.out.println("Wednesday");
+        break;
+      case 5:
+        System.out.println("Thursday");
+        break;
+      case 6:
+        System.out.println("Friday");
+        break;
+      case 7:
+        System.out.println("Saturday");
+        break;
+      default:
+        System.out.println("No such day");
+        break;
+    }
   }
   
   /**

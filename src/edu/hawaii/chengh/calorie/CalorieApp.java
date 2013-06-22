@@ -64,8 +64,6 @@ public class CalorieApp extends JFrame {
   private Processor process = new Processor();
   private List<String> userTitle = new ArrayList<String>();
   private String userName = "", userId = "", passcode = "";
-  @SuppressWarnings("unused")
-  private Avatar temp;
   private int userIndex = 0;
   //Signal to show a chart if user doesn't have data
   private int signal = 0;
@@ -241,16 +239,13 @@ public class CalorieApp extends JFrame {
             //Allows user to view their calories
             signal = 1;
             try {
-              process.writeFood(users.get(userIndex).getName(), meals);
+              users.get(userIndex).setFoodEaten(meals);
               process.serialData(users.get(userIndex));
             }
             catch (IOException x) {
               inputError();
             }
-          }
-    
-          temp = users.get(userIndex);
-      
+          } //end of inner if statement
         } //end of outer if statement
       } //end of actionPerformed method
     });
@@ -315,25 +310,13 @@ public class CalorieApp extends JFrame {
               area.setText("");
               area.append("Welcome. Sign-in successful.\n");
               
-              
               //Stores the necessary information to be used after user signed-in
               userName = users.get(j).getName();
               userId = idName;
               passcode = pass;
               userIndex = j;
               signal = 1;
-              
-              //Store information of previous foods eaten
-              try {
-                File tempFood = new File(userName + "_Food.txt");
-                
-                if (tempFood.exists()) {
-                  meals = process.readInFile(userName + "_Food.txt");
-                }
-              }
-              catch (IOException x) {
-                inputError();
-              }
+              meals = users.get(userIndex).getFoodEaten();
               
               break;
             }

@@ -13,9 +13,6 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Calendar;
-import java.util.Locale;
-import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import edu.hawaii.chengh.calorie.Avatar;
 
@@ -118,28 +115,6 @@ public class Processor {
     
     in.close();
     return null;
-  }
-  
-  /**
-   * Transfer information of what the user ate to a file.
-   * 
-   * @param name - user's name for the file.
-   * @param foods - names and calories of the food eaten.
-   * @throws IOException - exception.
-   */
-  public void writeFood(String name, List<String> foods) throws IOException {
-    File foodFile = new File(name + "_Food.txt");
-    PrintWriter printer = new PrintWriter(new FileWriter(foodFile, true));
-    
-    for (int i = 0; i < foods.size(); i++) {
-      if (i == foods.size() - 1) {
-        printer.print(foods.get(i));
-      }
-      else {
-        printer.println("\n" + foods.get(i));
-      }
-    }
-    printer.close();
   }
 }
 

@@ -1,5 +1,7 @@
 package edu.hawaii.chengh.calorie;
 
+import java.util.List;
+
 
 /**
  * User profile for keeping track of their calories.
@@ -16,6 +18,7 @@ public class Avatar implements java.io.Serializable {
   String userId;
   String passId;
   int inTake = 0;
+  List<String> foodEaten;
   
   /**
    * Creating the profile.
@@ -144,6 +147,24 @@ public class Avatar implements java.io.Serializable {
     this.inTake += inTake;
   }
   
+  /**
+   * Retrieve the list of foods.
+   * 
+   * @return foodEaten - list of foods the user ate.
+   */
+  public List<String> getFoodEaten() {
+    return foodEaten;
+  }
+  
+  /**
+   * Add list of foods to user profile to be ready for serialization.
+   * 
+   * @param foodEaten - list of foods the user ate.
+   */
+  public void setFoodEaten(List<String> foodEaten) {
+    this.foodEaten = foodEaten;
+  }
+
   /**
    * All of the user's current information on system. 
    * 

@@ -6,10 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -55,14 +53,16 @@ public class CalorieApp extends JFrame {
                     edit = new JMenuItem("Edit Profile"),
                     food = new JMenuItem("Add Food"),
                     viewChart = new JMenuItem("Calorie Chart"),
+                    viewWeek = new JMenuItem("Weekly Calories"),
                     viewFood = new JMenuItem("Food List"),
                     signIn = new JMenuItem("Sign-In"),
                     signOut = new JMenuItem("Sign-Out");
   
   private List<Avatar> users = new ArrayList<Avatar>();
   private List<String> meals = new ArrayList<String>();
-  private Processor process = new Processor();
   private List<String> userTitle = new ArrayList<String>();
+  private int[] weekCal = new int[7];
+  private Processor process = new Processor();
   private String userName = "", userId = "", passcode = "";
   private int userIndex = 0;
   //Signal to show a chart if user doesn't have data
@@ -92,6 +92,9 @@ public class CalorieApp extends JFrame {
     viewFood.setPreferredSize(new Dimension(250, 20));
     viewFood.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.ALT_MASK));
     
+    viewWeek.setPreferredSize(new Dimension(250, 20));
+    viewWeek.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.ALT_MASK));
+    
     signIn.setPreferredSize(new Dimension(250, 20));
     signIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
     
@@ -103,6 +106,7 @@ public class CalorieApp extends JFrame {
     menuFile.add(food);
     menuView.add(viewChart);
     menuView.add(viewFood);
+    menuView.add(viewWeek);
     access.add(signIn);
     access.add(signOut);
     menuBar.add(menuFile);
@@ -115,9 +119,6 @@ public class CalorieApp extends JFrame {
     mainPanel.add(menuBar);
     area.setEditable(false);
     mainPanel.add(area);
-    
-    checkDate();
-    
     
     /* If user used app before, then read in file of names to
      * read in information of all user profiles.
@@ -149,14 +150,17 @@ public class CalorieApp extends JFrame {
         if (valueOne == JOptionPane.OK_OPTION) {
           String[] info = conjurePanel.fieldInfo().split("  ");
           String password = new String(conjurePanel.secureCode());
+          Calendar date = Calendar.getInstance(Locale.US);
+          int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
           
           Avatar user = new Avatar(info[0], Integer.parseInt(info[1]), 
                                    Integer.parseInt(info[2]), info[3], password);
           userName = info[0];
           userId = info[3];
           passcode = password;
+          user.setDay(dayOfWeek);
           users.add(user);
-          userIndex = users.indexOf(userName);
+          userIndex = users.size() - 1;
           
           try {
             process.serialData(user);
@@ -227,8 +231,11 @@ public class CalorieApp extends JFrame {
                                                       JOptionPane.OK_CANCEL_OPTION);
         
         if (valueThree == JOptionPane.OK_OPTION) {
+          Calendar date = Calendar.getInstance(Locale.US);
+          int day = date.get(Calendar.DAY_OF_WEEK);
           String foodEaten = foodPanel.fieldInfo();
           meals.add(foodEaten);
+          
           
           if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
               passcode.equals(users.get(userIndex).getPassId())) {
@@ -236,6 +243,7 @@ public class CalorieApp extends JFrame {
             String[] splitted = foodPanel.fieldInfo().split("  ");
             //Add amount of calories the user consumed and the
             users.get(userIndex).setInTake(Integer.parseInt(splitted[1]));
+            weekCal[day - 1] += Integer.parseInt(splitted[1]);
             //Allows user to view their calories
             signal = 1;
             try {
@@ -280,6 +288,20 @@ public class CalorieApp extends JFrame {
       }
     });
     
+    //View the amount of calories the user consumed during the week
+    viewWeek.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        
+        int total = 0;
+        
+        for (int i = 0; i < weekCal.length; i++) {
+          total += weekCal[i];
+        }
+        
+        JOptionPane.showMessageDialog(null, "Total calories: " + total);
+      }
+    });
+    
     //View the list of food and its calories
     viewFood.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -318,6 +340,8 @@ public class CalorieApp extends JFrame {
               signal = 1;
               meals = users.get(userIndex).getFoodEaten();
               
+              checkDate();
+              
               break;
             }
             else {
@@ -341,6 +365,7 @@ public class CalorieApp extends JFrame {
         passcode = "";
         meals.clear();
         signal = 0;
+        weekCal = null;
       }
     });
     
@@ -373,36 +398,42 @@ public class CalorieApp extends JFrame {
    */
   public void checkDate() {
     Calendar date = Calendar.getInstance(Locale.US);
-    SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm a", Locale.US);
     
-    int day = date.get(Calendar.DAY_OF_WEEK);
+    int day = 0;
     
-    switch (day) {
+    switch (date.get(Calendar.DAY_OF_WEEK)) {
     
       case 1:
-        System.out.println("Sunday");
+        day = 1; //Sunday
         break;
       case 2:
-        System.out.println("Monday");
+        day = 2; //Monday
         break;
       case 3:
-        System.out.println("Tuesday");
+        day = 3; //Tuesday
         break;
       case 4:
-        System.out.println("Wednesday");
+        day = 4; //Wednesday
         break;
       case 5:
-        System.out.println("Thursday");
+        day = 5; //Thursday
         break;
       case 6:
-        System.out.println("Friday");
+        day = 6; //Friday
         break;
       case 7:
-        System.out.println("Saturday");
+        day = 7; //Saturday
         break;
       default:
         System.out.println("No such day");
         break;
+    }
+    
+    //Set daily calories to zero
+    if (users.get(userIndex).getDay() == day) {
+      weekCal[day - 1] = users.get(userIndex).getInTake();
+      users.get(userIndex).setWeeklyCal(weekCal);
+      users.get(userIndex).setInTake(0);
     }
   }
   

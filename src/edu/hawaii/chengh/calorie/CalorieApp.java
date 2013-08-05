@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
@@ -49,21 +51,22 @@ public class CalorieApp extends JFrame {
   private JMenu menuFile = new JMenu("File"), menuView = new JMenu("View"), 
                 access = new JMenu("Access");
   
-  private JMenuItem create = new JMenuItem("Create Avatar"), 
+  private JMenuItem create = new JMenuItem("Create Avatar"),
                     edit = new JMenuItem("Edit Profile"),
                     food = new JMenuItem("Add Food"),
                     viewChart = new JMenuItem("Calorie Chart"),
                     viewWeek = new JMenuItem("Weekly Calories"),
                     viewFood = new JMenuItem("Food List"),
                     signIn = new JMenuItem("Sign-In"),
-                    signOut = new JMenuItem("Sign-Out");
+                    signOut = new JMenuItem("Sign-Out"),
+                    delete = new JMenuItem("Delete Profile");
   
   private List<Avatar> users = new ArrayList<Avatar>();
   private List<String> meals = new ArrayList<String>();
   private List<String> userTitle = new ArrayList<String>();
-  private int[] weekCal = new int[7];
+  private List<Integer> weekCal =  new ArrayList<Integer>();
   private Processor process = new Processor();
-  private String userName = "", userId = "", passcode = "";
+  private String userId = "", passcode = "";
   private int userIndex = 0;
   //Signal to show a chart if user doesn't have data
   private int signal = 0;
@@ -93,7 +96,7 @@ public class CalorieApp extends JFrame {
     viewFood.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.ALT_MASK));
     
     viewWeek.setPreferredSize(new Dimension(250, 20));
-    viewWeek.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.ALT_MASK));
+    viewWeek.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.ALT_MASK));
     
     signIn.setPreferredSize(new Dimension(250, 20));
     signIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
@@ -101,9 +104,13 @@ public class CalorieApp extends JFrame {
     signOut.setPreferredSize(new Dimension(250, 20));
     signOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.ALT_MASK));
     
+    delete.setPreferredSize(new Dimension(250, 20));
+    delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK));
+    
     menuFile.add(create);
     menuFile.add(edit);
     menuFile.add(food);
+    menuFile.add(delete);
     menuView.add(viewChart);
     menuView.add(viewFood);
     menuView.add(viewWeek);
@@ -155,12 +162,18 @@ public class CalorieApp extends JFrame {
           
           Avatar user = new Avatar(info[0], Integer.parseInt(info[1]), 
                                    Integer.parseInt(info[2]), info[3], password);
-          userName = info[0];
+          
           userId = info[3];
           passcode = password;
           user.setDay(dayOfWeek);
           users.add(user);
           userIndex = users.size() - 1;
+          
+          for (int i = 0; i < 7; i++) {
+            weekCal.add(i, 0);
+          }
+          
+          user.setWeeklyCal(weekCal);
           
           try {
             process.serialData(user);
@@ -239,11 +252,11 @@ public class CalorieApp extends JFrame {
           
           if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
               passcode.equals(users.get(userIndex).getPassId())) {
-            
+ 
             String[] splitted = foodPanel.fieldInfo().split("  ");
-            //Add amount of calories the user consumed and the
+            //Add amount of calories the user consumed 
             users.get(userIndex).setInTake(Integer.parseInt(splitted[1]));
-            weekCal[day - 1] += Integer.parseInt(splitted[1]);
+            weekCal.set(day - 1, weekCal.get(day - 1) + Integer.parseInt(splitted[1]));
             //Allows user to view their calories
             signal = 1;
             try {
@@ -270,13 +283,12 @@ public class CalorieApp extends JFrame {
           JLabel limit = new JLabel("Overall calorie limit: " + 
                                           users.get(userIndex).getCalLimit());
           PieChart data = new PieChart();
-          JFrame pieData = new JFrame();
           
           data.add(limit);
-          pieData.setSize(300, 300);
+          pieFrame.setSize(300, 300);
           data.loadData(users.get(userIndex));
-          pieData.add(data);
-          pieData.setVisible(true);
+          pieFrame.add(data);
+          pieFrame.setVisible(true);
         }
         else {
           PieChart chart = new PieChart();
@@ -291,14 +303,26 @@ public class CalorieApp extends JFrame {
     //View the amount of calories the user consumed during the week
     viewWeek.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        JFrame barFrame = new JFrame();
         
-        int total = 0;
-        
-        for (int i = 0; i < weekCal.length; i++) {
-          total += weekCal[i];
+        if (userId.equalsIgnoreCase(users.get(userIndex).getUserId()) &&
+            passcode.equalsIgnoreCase(users.get(userIndex).getPassId()) &&
+                                                             signal != 0) {
+          BarChart barData = new BarChart();
+          
+          barFrame.setSize(500,500);
+          barData.loadBars(users.get(userIndex));
+          barFrame.add(barData);
+          barFrame.setVisible(true);
         }
+        else {
+          
+          BarChart bar = new BarChart();
         
-        JOptionPane.showMessageDialog(null, "Total calories: " + total);
+          barFrame.setSize(500, 500);
+          barFrame.add(bar);
+          barFrame.setVisible(true);
+        }
       }
     });
     
@@ -316,6 +340,7 @@ public class CalorieApp extends JFrame {
     
     //User logs in
     signIn.addActionListener(new ActionListener() {
+      @SuppressWarnings("unused")
       public void actionPerformed(ActionEvent e) {
         
         int valueFour = JOptionPane.showConfirmDialog(null, logIn, "Logging In",
@@ -333,14 +358,15 @@ public class CalorieApp extends JFrame {
               area.append("Welcome. Sign-in successful.\n");
               
               //Stores the necessary information to be used after user signed-in
-              userName = users.get(j).getName();
               userId = idName;
               passcode = pass;
               userIndex = j;
               signal = 1;
               meals = users.get(userIndex).getFoodEaten();
+              weekCal = users.get(userIndex).getWeeklyCal();
               
               checkDate();
+              checkWeek();
               
               break;
             }
@@ -360,12 +386,56 @@ public class CalorieApp extends JFrame {
         area.setText("");
         area.append("Signed-out");
         
+        try {
+          process.serialData(users.get(userIndex));
+        }
+        catch (FileNotFoundException e1) {
+          missingFile();
+        }
+        catch (IOException e1) {
+          inputError();
+        }
+        
         //Reset after user signs out
         userId = "";
         passcode = "";
         meals.clear();
         signal = 0;
-        weekCal = null;
+        weekCal.clear();
+      }
+    });
+    
+    delete.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+       int valueFive = JOptionPane.showConfirmDialog(null, "Delete profile. You sure?",
+                                                "Delete Profile", JOptionPane.OK_CANCEL_OPTION);
+       
+       if (valueFive == JOptionPane.OK_OPTION) {
+         try {
+          process.deleteFile(users.get(userIndex).getName());
+        }
+        catch (IOException e1) {
+          inputError();
+        } //end of try-catch
+       } //end of if statement
+      } //end of method
+    });
+    
+    //Saves data if user just closes application
+    this.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        
+        try {
+          process.serialData(users.get(userIndex));
+          setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        }
+        catch (FileNotFoundException e1) {
+          missingFile();
+        }
+        catch (IOException e1) {
+          inputError();
+        }
+        
       }
     });
     
@@ -373,7 +443,6 @@ public class CalorieApp extends JFrame {
     this.setTitle("Calorie App");
     this.setSize(new Dimension(900, 600));
     this.setVisible(true);
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
   /**
@@ -381,7 +450,7 @@ public class CalorieApp extends JFrame {
    */
   public void missingFile() {
     JOptionPane.showMessageDialog(null, "File not found", 
-        "No File", JOptionPane.ERROR_MESSAGE);
+                                  "No File", JOptionPane.ERROR_MESSAGE);
   }
   
   /**
@@ -430,13 +499,32 @@ public class CalorieApp extends JFrame {
     }
     
     //Set daily calories to zero
-    if (users.get(userIndex).getDay() == day) {
-      weekCal[day - 1] = users.get(userIndex).getInTake();
+    if (users.get(userIndex).getDay() != day) {
+      weekCal.set(users.get(userIndex).getDay() - 1, users.get(userIndex).getInTake());
       users.get(userIndex).setWeeklyCal(weekCal);
       users.get(userIndex).setInTake(0);
+      users.get(userIndex).setDay(day);
     }
+    
   }
   
+  /**
+   * Check the previous week the user logged in. 
+   * Ensure that user will see new set of weekly calorie
+   * intake. 
+   */
+  public void checkWeek() {
+    Calendar date = Calendar.getInstance(Locale.US);
+    
+    if (users.get(userIndex).getWeek() != date.get(Calendar.WEEK_OF_MONTH)) {
+      for (int i = 0; i < weekCal.size(); i++) {
+        weekCal.set(i, 0);
+      }
+      
+      users.get(userIndex).setWeek(date.get(Calendar.WEEK_OF_MONTH));
+      users.get(userIndex).setWeeklyCal(weekCal);
+    }
+  }
   /**
    * Main structure to execute the program.
    * 

@@ -1,5 +1,6 @@
 package edu.hawaii.chengh.calorie;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,6 +20,9 @@ public class Avatar implements java.io.Serializable {
   String passId;
   int inTake = 0;
   List<String> foodEaten;
+  List<Integer> weeklyCal = new ArrayList<Integer>();
+  int day = 0;
+  int week = 0;
   
   /**
    * Creating the profile.
@@ -144,7 +148,7 @@ public class Avatar implements java.io.Serializable {
    * @param inTake - additional amount of calories.
    */
   public void setInTake(int inTake) {
-    this.inTake += inTake;
+    this.inTake = inTake;
   }
   
   /**
@@ -163,6 +167,60 @@ public class Avatar implements java.io.Serializable {
    */
   public void setFoodEaten(List<String> foodEaten) {
     this.foodEaten = foodEaten;
+  }
+  
+  /**
+   * The day the user signed on to use the program.
+   * 
+   * @return day - value from Calendar class indicating the day of week.
+   */
+  public int getDay() {
+    return day;
+  }
+  
+  /**
+   * Current day when the user signs on.
+   * 
+   * @param day - value from Calendar class indicating the day of week.
+   */
+  public void setDay(int day) {
+    this.day = day;
+  }
+  
+  /**
+   * Seven days of calorie intake.
+   * 
+   * @return weeklyCal - amount of calorie consumed per day.
+   */
+  public List<Integer> getWeeklyCal() {
+    return weeklyCal;
+  }
+  
+  /**
+   * Add in another day of calorie.
+   * 
+   * @param weeklyCal - amount of calorie consumed per day
+   */
+  public void setWeeklyCal(List<Integer> weeklyCal) {
+    this.weeklyCal = weeklyCal;
+  }
+  
+  /**
+   * The week the user logged on.
+   * 
+   * @return week - value of the calendar week.
+   */
+  public int getWeek() {
+    return week;
+  }
+  
+  /**
+   * Changes week the user logged on. 
+   * 
+   * @param week - value of the calendar week.
+   */
+  public void setWeek(int week) {
+    this.week = week;
   }
 
   /**
